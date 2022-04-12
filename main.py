@@ -121,28 +121,29 @@ def test_disconnect():
 # receives data from client
 
 
-@socketio.on('message')
+@socketio.on('incoming-message')
 def message(data):
     print('here')
     print(f'\n\n{data}')
+    print(data['msg'])
     # emit('some-event', 'This is a custom event from server')
     # send data to client's 'some event' bucket
     send({'msg': data['msg'], 'username': data['username'],
-          'time_stamp': strftime('%b-%d %I:%m%p', localtime()), 'room': data['room']}, broadcast=True)
+          'time_stamp': strftime('%b-%d %I:%m%p', localtime())}, broadcast=True, room=data['room'])
 
 
 @socketio.on('join')
 def join(data):
     join_room(data['room'])
-    send({'msg': data['username'] + 'has joined the ' + data['room']}, room=data['room'])
+    send({'msg': data['username'] + ' just joined the ' + data['room'] + ' room'}, room=data['room'])
 
 
 @socketio.on('leave')
 def leave(data):
     print(data)
     leave_room(data['room'])
-    send({'msg': data['username'] + 'has left  the ' + data['room']}, room=data['room'])
+    send({'msg': data['username'] + 'has left  the ' + data['room'] + ' room'}, room=data['room'])
 
 
 if __name__ == '__main__':
-    socketio.run(app,debug=True)
+    socketio.run(app, debug=True)
