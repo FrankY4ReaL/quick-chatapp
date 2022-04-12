@@ -1,0 +1,24 @@
+{% from 'formhelper.html' import displayField %}
+<!-- prelogin -> base-->
+{% extends 'base.html' %}
+{% block title %} Register {% endblock %}
+{% block content %}
+<h1 class="mx-2 subhead"> Get Started</h1>
+<p class="maintitle subhead"> First time on our app? Register now and enjoy chatting.</p>
+<form action="{{url_for('index') }}" method="POST">
+    <div class="form-group row w-50">
+        {{ displayField(form.username,'Username',autocomplete='off',autofocus=true) }}
+        {{ displayField(form.password,'Password') }}
+        {{ displayField(form.confirm_password,'Confirm Password') }}
+
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-warning">
+
+        </div>
+        {{form.csrf_token}}
+        <p class="my-2 reg">Already Registered? <a href="{{ url_for('login') }}">Login Here</a>.</p>
+
+    </div>
+</form>
+<hr>
+{% endblock %}

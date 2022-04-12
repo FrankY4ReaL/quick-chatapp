@@ -1,0 +1,21 @@
+{% from 'formhelper.html' import displayField %}
+{% extends 'base.html' %}
+{% block title %} login {% endblock %}
+{% block content %}
+<h2 class="mx-2"> Login Now! </h2>
+<p> Enter Your Username/Password to Start Chatting</p>
+<form action="{{ url_for('login')}}" method="POST">
+    <div class="form-group row w-50">
+    {{ displayField(form.username,'Username',autocomplete='off') }}
+    {{ displayField(form.password,'Password',autocomplete='off') }}
+
+    <div class="form-group">
+        <input type="submit" class="btn btn-warning" value="Login">
+    </div>
+    {{form.csrf_token}}
+        <p class="my-3">Not registered? <a href="{{url_for('index') }}">Register Here</a> </p>
+    </div>
+
+</form>
+
+{% endblock %}
