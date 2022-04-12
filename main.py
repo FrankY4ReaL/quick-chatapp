@@ -8,18 +8,21 @@ from time import localtime, strftime
 import os
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY')
+app.secret_key = 'randomsecretkey'
 
 # initialize SocketIO
 socketio = SocketIO(app)
 ROOMS = ['lounge', 'news', 'games', 'coding']
 
-uri = os.environ.get('DATABASE_URL')
-if uri and uri.startswith("postgres://"):
-    uri = uri.replace("postgres://", "postgresql://", 1)
-app.config[
-    'SQLALCHEMY_DATABASE_URI'] = uri
+# below code is for when deploying to heroku
+# app.secret_key = os.environ.get('SECRET_KEY')
 
+# uri = os.environ.get('DATABASE_URL')
+# if uri and uri.startswith("postgres://"):
+#     uri = uri.replace("postgres://", "postgresql://", 1)
+# app.config[
+#     'SQLALCHEMY_DATABASE_URI'] = uri
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chat.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -142,4 +145,4 @@ def leave(data):
 
 
 if __name__ == '__main__':
-    app.run()
+    socketio.run(app,debug=True)
