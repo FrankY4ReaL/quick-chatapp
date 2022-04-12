@@ -5,16 +5,17 @@ from flask_login import LoginManager, UserMixin, login_user, current_user, login
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from time import localtime, strftime
+import os
 
 app = Flask(__name__)
-app.secret_key = 'changelater'
+app.secret_key = os.environ.get('SECRET_KEY')
 
 # initialize SocketIO
 socketio = SocketIO(app)
 ROOMS = ['lounge', 'news', 'games', 'coding']
 
 app.config[
-    'SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chat.db'
+    'SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
