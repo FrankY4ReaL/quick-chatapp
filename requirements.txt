@@ -89,7 +89,7 @@ trio==0.19.0
 trio-websocket==0.9.2
 twilio==7.4.0
 tzdata==2021.5
-urllib3==1.25.10
+
 username==2.1.0
 virtualenv==20.14.0
 visitor==0.1.3
