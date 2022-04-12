@@ -88,6 +88,8 @@ trio-websocket==0.9.2
 twilio==7.4.0
 tzdata==2021.5
 
+uplink==0.9.7
+uritemplate==4.1.1
 username==2.1.0
 virtualenv==20.14.0
 visitor==0.1.3
