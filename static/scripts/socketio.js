@@ -66,7 +66,8 @@ socket.on('message',data => {
 document.getElementById('send_message').onclick = () =>{
     console.log('data ready!')
 //    send data to the server
-    socket.send({'msg':document.getElementById('user_message').value,'username':username,'room':room});
+    socket.emit('incoming-message',{'msg':document.getElementById('user_message').value,'username':username,
+    'room':room});
 //    clear input area
     document.getElementById('user_message').value = '';
 
@@ -100,6 +101,9 @@ document.getElementById('logout-btn').onclick = () => {
 function leaveRoom(room){
 //emits to server
     socket.emit('leave',{'username':username,'room':room})
+     document.querySelectorAll('.select-room').forEach(p => {
+            p.style.color = "black";
+        });
 
 }
 
@@ -123,7 +127,10 @@ function scrollDownChatWindow(){
 function printSysMsg(msg){
     const p = document.createElement('p');
     p.setAttribute('class','system-msg');
-    p.innerHTML = msg;
+    const br = document.createElement('br');
+
+
+    p.innerHTML = br.outerHTML + msg;
     document.getElementById('display-message-section').append(p);
     scrollDownChatWindow();
 }
