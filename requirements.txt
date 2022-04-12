@@ -39,11 +39,7 @@ itsdangerous==2.1.2
 Jinja2==3.1.1
 joblib==1.1.0
 jsonify==0.5
-Kivy==2.0.0
-kivy-deps.angle==0.3.2
-kivy-deps.glew==0.3.1
-kivy-deps.sdl2==0.3.1
-Kivy-Garden==0.1.4
+
 kw==0.0.2
 lazy-object-proxy==1.4.3
 lxml==4.7.1
