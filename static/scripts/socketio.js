@@ -1,48 +1,41 @@
+// Initialize client side socket
 var socket = io();
-//global
+
 // by default user will join lounge
 let room = "Lounge";
 joinRoom("Lounge")
-//socket.on('connect', () => {
-////        socket.send('I\'m connected!');
-//    });
 
 socket.on('message',data => {
-
-//        console.log(`message : ${data}`)
-    console.log('client data')
+  // When Client receives message from the server
     const p = document.createElement('p');
     const span_username = document.createElement('span');
     const br = document.createElement('br');
     const span_timestamp = document.createElement('span');
-    console.log(data.msg)
+
     if (data.username == username){
-//    Dispaly Messages
+
          p.setAttribute('class','my-msg');
 
-//       username
+// Username
          span_username.setAttribute('class','my-username');
          span_username.innerText = data.username;
-//         time stamp
+//  Timestamp
          span_timestamp.setAttribute('class','timestamp');
          span_timestamp.innerText = data.time_stamp
 
-
-
-
-        p.innerHTML += span_username.outerHTML + br.outerHTML + data.msg + br.outerHTML + span_timestamp.outerHTML;
-        document.getElementById('display-message-section').append(p)
+         p.innerHTML += span_username.outerHTML + br.outerHTML + data.msg + br.outerHTML + span_timestamp.outerHTML;
+         document.getElementById('display-message-section').append(p)
 
     }
     else if
         (typeof data.username !== 'undefined'){
            p.setAttribute('class','others-msg');
 
-//           usernames
+//  Usename
           span_username.setAttribute('class','others-username')
           span_username.innerText = data.username;
 
-//        time_stamp
+//  Timestamp
 
           span_timestamp.setAttribute('class','timestamp');
           span_timestamp.innerText =  data.time_stamp;
@@ -53,18 +46,17 @@ socket.on('message',data => {
 
         }
 
-
-
     else {
         printSysMsg(data.msg)
     }
+    // scrolls window down auto
     scrollDownChatWindow();
 
 });
 
 
 document.getElementById('send_message').onclick = () =>{
-    console.log('data ready!')
+
 //    send data to the server
     socket.emit('incoming-message',{'msg':document.getElementById('user_message').value,'username':username,
     'room':room});
@@ -75,7 +67,7 @@ document.getElementById('send_message').onclick = () =>{
 // Room selection
 document.querySelectorAll('.select-room').forEach(p => {
     p.onclick = () => {
-        console.log('clicked')
+
         let newroom = p.innerHTML;
 //        room -> current room
         if (newroom == room){
@@ -86,14 +78,13 @@ document.querySelectorAll('.select-room').forEach(p => {
 
             leaveRoom(room)
             joinRoom(newroom)
-//            user joined new room update that to newroom
+//           user joined new room update that to newroom
             room = newroom
-
-
         }
     }
-})
+});
 
+// When user clicks logout send request to server
 document.getElementById('logout-btn').onclick = () => {
  leaveRoom(room)
 }
@@ -128,8 +119,6 @@ function printSysMsg(msg){
     const p = document.createElement('p');
     p.setAttribute('class','system-msg');
     const br = document.createElement('br');
-
-
     p.innerHTML = br.outerHTML + msg;
     document.getElementById('display-message-section').append(p);
     scrollDownChatWindow();
