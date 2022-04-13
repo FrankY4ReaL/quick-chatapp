@@ -14,7 +14,8 @@ app.secret_key = 'randomsecretkey'
 socketio = SocketIO(app)
 ROOMS = ['lounge', 'news', 'games', 'coding']
 
-# below code is for when deploying to heroku
+'''
+ for herkou deployment
 # app.secret_key = os.environ.get('SECRET_KEY')
 
 # uri = os.environ.get('DATABASE_URL')
@@ -22,14 +23,17 @@ ROOMS = ['lounge', 'news', 'games', 'coding']
 #     uri = uri.replace("postgres://", "postgresql://", 1)
 # app.config[
 #     'SQLALCHEMY_DATABASE_URI'] = uri
+'''
+
+# for local databse
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chat.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
 
-# usermixin tells flask login about the user and adds properties like is_authenticated
-# and get_id etc to the User table to handle session management.It doesn't modify the table
+''' Usermixin tells flask login about the user and adds properties like is_authenticated and get_id etc
+to the User table to handle session management. '''
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -37,13 +41,15 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(255), nullable=False)
 
 
+# creates user table
 db.create_all()
 
+# Initialize Login manager
 login = LoginManager(app)
 login.init_app(app)
 
 
-# we need to load the user in whenever any user logs in.it returns that user object
+# we need to load the user in whenever any user logs in.It returns that user object
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -51,6 +57,9 @@ def load_user(id):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    """
+    First page to load, handles user registartion
+    """
     reg_form = RegistrationForm()
     if reg_form.validate_on_submit():
         username = reg_form.username.data
@@ -70,6 +79,9 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """
+    Handles user login process
+    """
     login_form = LoginForm()
     if login_form.validate_on_submit():
         username = login_form.username.data
@@ -93,20 +105,23 @@ def login():
 @app.route('/chat', methods=['GET', 'POST'])
 @login_required
 def chat():
-    # if not current_user.is_authenticated:
-    #     flash('Please Login', 'danger')  # this is displayed in login page
-    #     return redirect(url_for('login'))
+    """
+    renders chat page
+    """
     return render_template('chat.html', username=current_user.username, rooms=ROOMS)
 
 
 @app.route('/logout', methods=['GET'])
 @login_required
 def logout():
+    """
+    logs user out
+    """
     logout_user()
     flash('You logged out successfully', 'success')
     return redirect(url_for('login'))
 
-
+# test whether client is connected
 @socketio.on('connect')
 def test():
     print(' client connected')
@@ -117,30 +132,31 @@ def test_disconnect():
     print('Client disconnected')
 
 
-# event bucket
-# receives data from client
-
-
+# custom bucket receives message from client
 @socketio.on('incoming-message')
 def message(data):
-    print('here')
-    print(f'\n\n{data}')
-    print(data['msg'])
-    # emit('some-event', 'This is a custom event from server')
-    # send data to client's 'some event' bucket
+    """
+    gets data from the client and sends it to all clients according to room
+    """
+
     send({'msg': data['msg'], 'username': data['username'],
           'time_stamp': strftime('%b-%d %I:%m%p', localtime())}, broadcast=True, room=data['room'])
 
 
 @socketio.on('join')
 def join(data):
+    """
+    handles room joining event of client
+    """
     join_room(data['room'])
     send({'msg': data['username'] + ' just joined the ' + data['room'] + ' room'}, room=data['room'])
 
 
 @socketio.on('leave')
 def leave(data):
-    print(data)
+    """
+    handles room leaving process of client
+    """
     leave_room(data['room'])
     send({'msg': data['username'] + 'has left  the ' + data['room'] + ' room'}, room=data['room'])
 
